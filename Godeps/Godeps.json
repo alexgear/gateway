@@ -1,0 +1,43 @@
+{
+	"ImportPath": "github.com/alexgear/gateway",
+	"GoVersion": "go1.5.1",
+	"Deps": [
+		{
+			"ImportPath": "github.com/BurntSushi/toml",
+			"Comment": "v0.1.0-21-g056c9bc",
+			"Rev": "056c9bc7be7190eaa7715723883caffa5f8fa3e4"
+		},
+		{
+			"ImportPath": "golang.org/x/net/context",
+			"Rev": "5d0a0f8cd486626821d2ba44d471ab1c9271d38f"
+		},
+		{
+			"ImportPath": "golang.org/x/oauth2",
+			"Rev": "2baa8a1b9338cf13d9eeb27696d761155fa480be"
+		},
+		{
+			"ImportPath": "google.golang.org/api/calendar/v3",
+			"Rev": "dc6d2353af16e2a2b0ff6986af051d473a4ed468"
+		},
+		{
+			"ImportPath": "google.golang.org/api/gensupport",
+			"Rev": "dc6d2353af16e2a2b0ff6986af051d473a4ed468"
+		},
+		{
+			"ImportPath": "google.golang.org/api/gmail/v1",
+			"Rev": "dc6d2353af16e2a2b0ff6986af051d473a4ed468"
+		},
+		{
+			"ImportPath": "google.golang.org/api/googleapi",
+			"Rev": "dc6d2353af16e2a2b0ff6986af051d473a4ed468"
+		},
+		{
+			"ImportPath": "google.golang.org/cloud/compute/metadata",
+			"Rev": "6fdcab499d2c45e2939521c4047855f12a745a1d"
+		},
+		{
+			"ImportPath": "google.golang.org/cloud/internal",
+			"Rev": "6fdcab499d2c45e2939521c4047855f12a745a1d"
+		}
+	]
+}
