@@ -4,16 +4,21 @@ import "github.com/BurntSushi/toml"
 
 type config struct {
 	CalendarId string
+	ServerHost string
+	ServerPort int
 }
 
 var err error
+var cfg config
 
-func New(configPath string) (config, error) {
-	var conf config
-	_, err = toml.DecodeFile(configPath, &conf)
+func Init(configPath string) error {
+	_, err = toml.DecodeFile(configPath, &cfg)
 	if err != nil {
-		return conf, err
+		return err
 	}
+	return nil
+}
 
-	return conf, nil
+func GetConfig() *config {
+	return &cfg
 }

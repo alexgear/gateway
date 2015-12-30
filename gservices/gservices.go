@@ -22,25 +22,31 @@ import (
 	"google.golang.org/api/gmail/v1"
 )
 
+var client *http.Client
+
 type Mail struct {
 	Id      string
 	Date    string
 	Subject string
 }
 
-func New() (client *http.Client) {
+func Init() error {
 	ctx := context.Background()
 	b, err := ioutil.ReadFile("client_secret.json")
 	if err != nil {
-		log.Fatalf("Unable to read client secret file: %v", err)
+		return fmt.Errorf("Unable to read client secret file: %v", err.Error())
 	}
 	config, err := google.ConfigFromJSON(b, gmail.GmailReadonlyScope,
 		gmail.GmailComposeScope, gmail.GmailModifyScope, calendar.CalendarReadonlyScope)
 	if err != nil {
-		log.Fatalf("Unable to parse client secret file to config: %v", err)
+		return fmt.Errorf("Unable to parse client secret file to config: %v", err.Error())
 	}
 	client = getClient(ctx, config)
-	return
+	return nil
+}
+
+func GetClient() *http.Client {
+	return client
 }
 
 // getClient uses a Context and Config to retrieve a Token
@@ -114,12 +120,11 @@ func saveToken(file string, token *oauth2.Token) {
 	json.NewEncoder(f).Encode(token)
 }
 
-func GetDuty(client *http.Client, calendarId string) (string, error) {
+func GetDuty(calendarId string) (string, error) {
 	srv, err := calendar.New(client)
 	if err != nil {
-		return "", fmt.Errorf("Unable to retrieve calendar Client %v", err)
+		return "", fmt.Errorf("Unable to retrieve gmail Client %v", err)
 	}
-
 	t := time.Now().Format(time.RFC3339)
 	events, err := srv.Events.List(calendarId).ShowDeleted(false).
 		SingleEvents(true).TimeMin(t).MaxResults(1).OrderBy("startTime").Do()
@@ -137,16 +142,15 @@ func GetDuty(client *http.Client, calendarId string) (string, error) {
 	}
 }
 
-func GetMail(client *http.Client) ([]Mail, error) {
+func GetMail() ([]Mail, error) {
+	messages := []Mail{}
 	srv, err := gmail.New(client)
 	if err != nil {
-		log.Fatalf("Unable to retrieve gmail Client %v", err)
+		return messages, fmt.Errorf("Unable to retrieve gmail Client %v", err)
 	}
-
 	user := "me"
 	var pageToken string
 	var wg sync.WaitGroup
-	messages := []Mail{}
 	for {
 		req := srv.Users.Messages.List(user).LabelIds("UNREAD")
 		if pageToken != "" {
@@ -201,12 +205,11 @@ func GetMail(client *http.Client) ([]Mail, error) {
 	return messages, nil
 }
 
-func ReadMail(client *http.Client, msg Mail) error {
+func ReadMail(msg Mail) error {
 	srv, err := gmail.New(client)
 	if err != nil {
 		return fmt.Errorf("Unable to retrieve gmail Client %v", err)
 	}
-
 	user := "me"
 	log.Println("Reading message", msg.Id)
 	_, err = srv.Users.Messages.Modify(user, msg.Id, &gmail.ModifyMessageRequest{
